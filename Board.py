@@ -45,7 +45,7 @@ class Board:
         return ""
 
     def load_start_board(self, start_file_name):
-        f = open(start_file_name, "r")
+        f = open(f"start_files/{start_file_name}", "r")
         lines = f.readlines()
         self.row_count = lines[0][0]
         self.column_count = lines[0][2]
@@ -103,6 +103,3 @@ class Board:
             tmp_board[empty_field_row][empty_field_column] = tmp_value
             # Changing the coordinates of 'empty field' field
             self.empty_field_coordinates['row'] += 1
-
-
-

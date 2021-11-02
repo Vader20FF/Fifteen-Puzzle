@@ -19,10 +19,10 @@ if __name__ == '__main__':
     # Creating the BOARD object along with reading the lines from input file and settings coordinates of empty fields
     # board = Board("4x4_01_0001.txt")
     board = Board(args.start_file)
-    print(board)
-    print("Empty fields coordinates:", board.empty_field_coordinates)
+    # print(board)
+    # print("Empty fields coordinates:", board.empty_field_coordinates)
 
-    # Creating the GAME object along with starting the game itself
+    # Creating and starting the GAME
     game = Game(args.strategy, args.strategy_method, args.solution_file, args.additional_file, board)
 
     # Wait until user presses key
