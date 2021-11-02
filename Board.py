@@ -1,10 +1,12 @@
 import time
+import copy
 
 
 class Board:
     row_count = 0
     column_count = 0
     empty_field_coordinates = {}
+    initial_board = []
     board = []
     solved_board_3_3 = [['1', '2', '3'],
                         ['4', '5', '6'],
@@ -13,57 +15,94 @@ class Board:
                         ['5', '6', '7', '8'],
                         ['9', '10', '11', '12'],
                         ['13', '14', '15', '0']]
-    solved_boards = [solved_board_3_3, solved_board_4_4]
+    solved_boards_examples = [solved_board_3_3, solved_board_4_4]
 
-    def __init__(self, start_file_name):
-        self.load_start_board(start_file_name)
-        self.set_empty_field_coordinates()
+    def __init__(self, start_file_name, board=None):
+        if start_file_name is not None:
+            self.load_start_board(start_file_name)
+        else:
+            self.board = board
+            self.row_count = len(board)
+            self.column_count = len(board[0])
+
+        self.initial_board = copy.deepcopy(self.board)
+        self.identify_empty_field_coordinates()
+
+    def __repr__(self):
+        for board in [self.initial_board, self.board]:
+            if board == self.initial_board:
+                print("Initial Board:")
+            else:
+                print("Current Board:")
+            for row in range(int(self.row_count)):
+                if row != 0:
+                    print()
+                for column in range(int(self.column_count)):
+                    print(board[row][column] + " ", end="")
+            print()
+            print()
+
+        return ""
 
     def load_start_board(self, start_file_name):
         f = open(start_file_name, "r")
         lines = f.readlines()
-        print(lines)
-        row_count = lines[0][0]
-        column_count = lines[0][2]
-        lines = lines[1:-1]
+        self.row_count = lines[0][0]
+        self.column_count = lines[0][2]
+        lines = lines[1:]
         for line in lines:
             formatted_line = line.rstrip().split()
             self.board.append(formatted_line)
 
-    def create_solution_file(self, solution_file_name, solved, solution_length, moves):
-        f = open(solution_file_name, 'w+')
-        if solved:
-            f.write(solution_length)
-            f.write('\n')
-            f.write(moves)
-            f.write('\n')
-        else:
-            f.write("-1\n")
-        f.close()
-
-    def create_additional_file(self, additional_file_name, solved, solution_length, visited_nodes, processed_nodes,
-                              depth_level, processing_time):
-        f = open(additional_file_name, 'w+')
-        if solved:
-            f.write(solution_length)
-            f.write('\n')
-            f.write(visited_nodes)
-            f.write('\n')
-            f.write(processed_nodes)
-            f.write('\n')
-            f.write(depth_level)
-            f.write('\n')
-            f.write(str(round((time.time() - processing_time) * 1000, 3)))
-            f.write('\n')
-        else:
-            f.write("-1\n")
-        f.close()
-
-    def set_empty_field_coordinates(self):
-        for row in range(len(self.board)):
-            for column in range(len(self.board) + 1):
+    def identify_empty_field_coordinates(self):
+        for row in range(int(self.row_count)):
+            for column in range(int(self.column_count)):
                 if self.board[row][column] == "0":
-                    self.empty_field_coordinates = {row, column}
+                    self.empty_field_coordinates['row'] = row
+                    self.empty_field_coordinates['column'] = column
+
+    def make_move(self, move):
+        empty_field_row = self.board.empty_field_coordinates['row']
+        empty_field_column = self.board.empty_field_coordinates['column']
+
+        tmp_board = copy.deepcopy(self.board)
+
+        if move == 'L':
+            # Saving the value of field on the left of 'empty field'
+            tmp_value = tmp_board[empty_field_row][empty_field_column - 1]
+            # Assigning 'empty field' to the field on the left of 'empty field'
+            tmp_board[empty_field_row][empty_field_column - 1] = tmp_board[empty_field_row][empty_field_column]
+            # Assigning saved, previous value of field on the left to previous 'empty field' field
+            tmp_board[empty_field_row][empty_field_column] = tmp_value
+            # Changing the coordinates of 'empty field' field
+            self.empty_field_coordinates['column'] -= 1
+        elif move == 'R':
+            # Saving the value of field on the right of 'empty field'
+            tmp_value = tmp_board[empty_field_row][empty_field_column + 1]
+            # Assigning 'empty field' to the field on the right of 'empty field'
+            tmp_board[empty_field_row][empty_field_column + 1] = tmp_board[empty_field_row][empty_field_column]
+            # Assigning saved, previous value of field on the right to previous 'empty field' field
+            tmp_board[empty_field_row][empty_field_column] = tmp_value
+            # Changing the coordinates of 'empty field' field
+            self.empty_field_coordinates['column'] += 1
+        elif move == 'U':
+            # Saving the value of field above 'empty field'
+            tmp_value = tmp_board[empty_field_row - 1][empty_field_column]
+            # Assigning 'empty field' to the field above 'empty field'
+            tmp_board[empty_field_row - 1][empty_field_column] = tmp_board[empty_field_row][empty_field_column]
+            # Assigning saved, previous value of field above previous 'empty field' field
+            tmp_board[empty_field_row][empty_field_column] = tmp_value
+            # Changing the coordinates of 'empty field' field
+            self.empty_field_coordinates['row'] -= 1
+        elif move == 'D':
+            # Saving the value of field under 'empty field'
+            tmp_value = tmp_board[empty_field_row + 1][empty_field_column]
+            # Assigning 'empty field' to the field under 'empty field'
+            tmp_board[empty_field_row + 1][empty_field_column] = tmp_board[empty_field_row][empty_field_column]
+            # Assigning saved, previous value of field under previous 'empty field' field
+            tmp_board[empty_field_row][empty_field_column] = tmp_value
+            # Changing the coordinates of 'empty field' field
+            self.empty_field_coordinates['row'] += 1
 
 
 
