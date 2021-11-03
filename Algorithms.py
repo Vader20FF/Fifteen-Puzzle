@@ -1,18 +1,62 @@
-def bfs(start_time, board):
-    max_depth_level = 20
+from queue import Queue
+from copy import deepcopy
+from time import time
 
-    visited_nodes = 0
-    processed_nodes = 0
+def is_game_solved(board):
+    solved_board_3_3 = [['1', '2', '3'],
+                        ['4', '5', '6'],
+                        ['7', '8', '0']]
+
+    solved_board_4_4 = [['1', '2', '3', '4'],
+                        ['5', '6', '7', '8'],
+                        ['9', '10', '11', '12'],
+                        ['13', '14', '15', '0']]
+
+    solved_boards_examples = [solved_board_3_3, solved_board_4_4]
+
+    for solved_board in solved_boards_examples:
+        if board == solved_board:
+            return True
+    return False
+
+def bfs(start_time, board):
+    visited_nodes = 1
+    processed_nodes = 1
     depth_level = 0
     processing_time = 0
     solved = False
 
-    pass
+    searched = []
+    queue = []
 
-    return visited_nodes, processed_nodes, depth_level, processing_time, solved
+    while True:
+        if is_game_solved(board.current_board):
+            solved = True
+            return board.path, visited_nodes, processed_nodes, depth_level, processing_time, solved
+        else:
+            if not board.last_move is None:
+                board.remove_empty_moves()
+            for move in board.queue:
+                processed_nodes += 1
+                board.make_move(move)
+                board = board.children[move]
+                queue.append(board)
+                last_move = board.path[-1]
+                board.identify_empty_field_coordinates()
+                board = board.parent
+            try:
+                if board.last is not None:
+                    queue.remove(board)
+            except ValueError:
+                pass
+            board = queue[0]
+            visited_nodes += 1
+            board.identify_empty_field_coordinates()
 
 
 def dfs(start_time, board):
+    max_depth_level = 20
+
     visited_nodes = 0
     processed_nodes = 0
     depth_level = 0

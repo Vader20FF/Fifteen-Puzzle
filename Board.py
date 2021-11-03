@@ -1,31 +1,29 @@
 import time
-import copy
+from copy import deepcopy
 
 
 class Board:
     row_count = 0
     column_count = 0
     empty_field_coordinates = {}
-    initial_board = []
+    children = {}
     board = []
-    solved_board_3_3 = [['1', '2', '3'],
-                        ['4', '5', '6'],
-                        ['7', '8', '0']]
-    solved_board_4_4 = [['1', '2', '3', '4'],
-                        ['5', '6', '7', '8'],
-                        ['9', '10', '11', '12'],
-                        ['13', '14', '15', '0']]
-    solved_boards_examples = [solved_board_3_3, solved_board_4_4]
 
-    def __init__(self, start_file_name, board=None):
+    def __init__(self, start_file_name=None, board=None, parent=None, last_move=None, path=None, queue=None):
         if start_file_name is not None:
             self.load_start_board(start_file_name)
+            self.row_count = len(board)
+            self.column_count = len(board[0])
+            self.initial_board = deepcopy(self.board)
         else:
             self.board = board
             self.row_count = len(board)
             self.column_count = len(board[0])
+            self.parent = parent
+            self.last_move = last_move
+            self.path = deepcopy(path)
+            self.queue = queue
 
-        self.initial_board = copy.deepcopy(self.board)
         self.identify_empty_field_coordinates()
 
     def __repr__(self):
@@ -61,11 +59,16 @@ class Board:
                     self.empty_field_coordinates['row'] = row
                     self.empty_field_coordinates['column'] = column
 
+    def make_child(self, move, modified_board):
+        child = Board(start_file_name=None, board=modified_board, parent=self, last_move=self.last_move, path=self.path,
+                      queue=self.queue)
+        self.children[move] = child
+
     def make_move(self, move):
         empty_field_row = self.board.empty_field_coordinates['row']
         empty_field_column = self.board.empty_field_coordinates['column']
 
-        tmp_board = copy.deepcopy(self.board)
+        tmp_board = deepcopy(self.board)
 
         if move == 'L':
             # Saving the value of field on the left of 'empty field'
@@ -76,6 +79,7 @@ class Board:
             tmp_board[empty_field_row][empty_field_column] = tmp_value
             # Changing the coordinates of 'empty field' field
             self.empty_field_coordinates['column'] -= 1
+            self.make_child(move, tmp_board)
         elif move == 'R':
             # Saving the value of field on the right of 'empty field'
             tmp_value = tmp_board[empty_field_row][empty_field_column + 1]
@@ -103,3 +107,31 @@ class Board:
             tmp_board[empty_field_row][empty_field_column] = tmp_value
             # Changing the coordinates of 'empty field' field
             self.empty_field_coordinates['row'] += 1
+
+    def remove_empty_moves(self):
+        self.identify_empty_field_coordinates()
+
+        if self.empty_field_coordinates['column'] == self.column_count - 1 and \
+                self.empty_field_coordinates['row'] == self.row_count - 1:
+            self.queue.remove('R')
+            self.queue.remove('D')
+        elif self.empty_field_coordinates['column'] == self.column_count - 1 and \
+                self.empty_field_coordinates['row'] == 0:
+            self.queue.remove('R')
+            self.queue.remove('U')
+        elif self.empty_field_coordinates['column'] == 0 and \
+                self.empty_field_coordinates['row'] == 0:
+            self.queue.remove('L')
+            self.queue.remove('U')
+        elif self.empty_field_coordinates['column'] == 0 and \
+                self.empty_field_coordinates['row'] == self.row_count - 1:
+            self.queue.remove('L')
+            self.queue.remove('D')
+        elif self.empty_field_coordinates['column'] == 0:
+            self.queue.remove('L')
+        elif self.empty_field_coordinates['column'] == self.column_count - 1:
+            self.queue.remove('R')
+        elif self.empty_field_coordinates['row'] == 0:
+            self.queue.remove('U')
+        elif self.empty_field_coordinates['row'] == self.row_count - 1:
+            self.queue.remove('D')
