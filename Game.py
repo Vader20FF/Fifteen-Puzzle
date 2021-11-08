@@ -6,7 +6,7 @@ from Board import Board
 
 class Game:
     def __init__(self, strategy, strategy_method, start_file_name, solution_file_name, additional_file_name):
-        self.start_time = time.time()
+        self.start_time = time()
         self.strategy = strategy
         self.strategy_method = strategy_method
         self.solution_file_name = solution_file_name

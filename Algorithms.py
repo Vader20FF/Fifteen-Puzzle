@@ -19,39 +19,37 @@ def is_game_solved(board):
             return True
     return False
 
+
 def bfs(start_time, board):
     visited_nodes = 1
     processed_nodes = 1
     depth_level = 0
-    processing_time = 0
-    solved = False
 
-    searched = []
-    queue = []
+    path = []
+    searched = [board]
+    queue = [board]
 
-    while True:
-        if is_game_solved(board.current_board):
+    while queue:
+        if is_game_solved(board.board):
             solved = True
-            return board.path, visited_nodes, processed_nodes, depth_level, processing_time, solved
-        else:
-            if not board.last_move is None:
-                board.remove_empty_moves()
-            for move in board.queue:
+            processing_time = time() - start_time
+            return path, visited_nodes, processed_nodes, depth_level, processing_time, solved
+
+        queue.pop(0)
+        for move in ['L', 'R', 'U', 'D']:
+            path.append(move)
+            board.make_move(move)
+        for child in board.children:
+            if child not in searched:
+                print(child)
+                searched.append(child)
+                queue.append(child)
                 processed_nodes += 1
-                board.make_move(move)
-                board = board.children[move]
-                queue.append(board)
-                last_move = board.path[-1]
-                board.identify_empty_field_coordinates()
-                board = board.parent
-            try:
-                if board.last is not None:
-                    queue.remove(board)
-            except ValueError:
-                pass
-            board = queue[0]
-            visited_nodes += 1
-            board.identify_empty_field_coordinates()
+        visited_nodes += 1
+
+    solved = False
+    processing_time = time() - start_time
+    return path, visited_nodes, processed_nodes, depth_level, processing_time, solved
 
 
 def dfs(start_time, board):
