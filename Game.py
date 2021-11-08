@@ -42,7 +42,7 @@ class Game:
         f.close()
 
     def create_additional_file(self, solved, path, visited_nodes, processed_nodes,
-                              depth_level, processing_time):
+                               depth_level, processing_time):
         f = open(self.additional_file_name, 'w+')
         if solved:
             f.write(len(path))

@@ -3,11 +3,9 @@ from copy import deepcopy
 
 
 class Board:
-    row_count = 0
-    column_count = 0
     empty_field_coordinates = []
-    children = []
     board = []
+    children = []
 
     def __init__(self, start_file_name=None, board=None, parent=None, last_move=None):
         if start_file_name is not None:
@@ -68,7 +66,7 @@ class Board:
                     self.empty_field_coordinates.append(column)
 
     def make_child(self, move, modified_board):
-        child = Board(start_file_name=None, board=modified_board, parent=self, last_move=self.last_move)
+        child = Board(start_file_name=None, board=modified_board, parent=self, last_move=move)
         self.children.append(child)
 
     def make_move(self, move):

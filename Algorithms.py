@@ -2,6 +2,7 @@ from queue import Queue
 from copy import deepcopy
 from time import time
 
+
 def is_game_solved(board):
     solved_board_3_3 = [['1', '2', '3'],
                         ['4', '5', '6'],
@@ -26,26 +27,41 @@ def bfs(start_time, board):
     depth_level = 0
 
     path = []
-    searched = [board]
+    searched = [board.board]
     queue = [board]
 
     while queue:
-        if is_game_solved(board.board):
+        if is_game_solved(queue[0].board):
             solved = True
             processing_time = time() - start_time
             return path, visited_nodes, processed_nodes, depth_level, processing_time, solved
 
-        queue.pop(0)
         for move in ['L', 'R', 'U', 'D']:
-            path.append(move)
-            board.make_move(move)
-        for child in board.children:
-            if child not in searched:
-                print(child)
-                searched.append(child)
+            queue[0].make_move(move)
+
+        for child in queue[0].children:
+            if child.board not in searched:
+                path.append(child.last_move)
+                searched.append(child.board)
                 queue.append(child)
                 processed_nodes += 1
         visited_nodes += 1
+
+        queue.pop(0)
+
+        print("BOARD:")
+        print(board)
+        print()
+        print("BOARD CHILDREN:", len(board.children))
+        print("QUEUE CHILDREN:", len(queue))
+        print("PROCESSED NODES:", processed_nodes)
+        counter = 1
+        for child in queue:
+            print("IN QUEUE CHILD NR:", counter)
+            print(child)
+            counter += 1
+        print()
+        print("----------------------------------")
 
     solved = False
     processing_time = time() - start_time
