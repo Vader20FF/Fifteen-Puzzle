@@ -1,4 +1,3 @@
-import time
 from copy import deepcopy
 
 
@@ -70,6 +69,7 @@ class Board:
         self.children.append(child)
 
     def make_move(self, move):
+        self.identify_empty_field_coordinates()
         empty_field_row = self.empty_field_coordinates[0]
         empty_field_column = self.empty_field_coordinates[1]
 

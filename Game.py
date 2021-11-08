@@ -1,5 +1,4 @@
-import copy
-import time
+from time import time
 from Algorithms import *
 from Board import Board
 
@@ -33,9 +32,9 @@ class Game:
     def create_solution_file(self, solved, path):
         f = open(self.solution_file_name, 'w+')
         if solved:
-            f.write(len(path))
+            f.write(str(len(path)))
             f.write('\n')
-            f.write(path)
+            f.write(str(path))
             f.write('\n')
         else:
             f.write("-1\n")
@@ -45,15 +44,15 @@ class Game:
                                depth_level, processing_time):
         f = open(self.additional_file_name, 'w+')
         if solved:
-            f.write(len(path))
+            f.write(str(len(path)))
             f.write('\n')
-            f.write(visited_nodes)
+            f.write(str(visited_nodes))
             f.write('\n')
-            f.write(processed_nodes)
+            f.write(str(processed_nodes))
             f.write('\n')
-            f.write(depth_level)
+            f.write(str(depth_level))
             f.write('\n')
-            f.write(str(round((time.time() - processing_time) * 1000, 3)))
+            f.write(str(round((time() - processing_time) * 1000, 3)))
             f.write('\n')
         else:
             f.write("-1\n")

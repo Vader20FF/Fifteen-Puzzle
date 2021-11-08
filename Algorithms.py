@@ -15,10 +15,15 @@ def is_game_solved(board):
 
     solved_boards_examples = [solved_board_3_3, solved_board_4_4]
 
-    for solved_board in solved_boards_examples:
-        if board == solved_board:
-            return True
-    return False
+    # for solved_board in solved_boards_examples:
+    #     if board == solved_board:
+    #         return True
+
+    for board_to_check in solved_boards_examples:
+        for row in board_to_check:
+            for column in board_to_check[row]:
+                if board_to_check[row][column] != board[row][column]:
+                    return False
 
 
 def bfs(start_time, board):
@@ -33,6 +38,7 @@ def bfs(start_time, board):
     while queue:
         if is_game_solved(queue[0].board):
             solved = True
+            print(solved)
             processing_time = time() - start_time
             return path, visited_nodes, processed_nodes, depth_level, processing_time, solved
 
@@ -50,11 +56,11 @@ def bfs(start_time, board):
         queue.pop(0)
 
         print("BOARD:")
-        print(board)
-        print()
-        print("BOARD CHILDREN:", len(board.children))
+        print(queue[0])
+        print("BOARD CHILDREN:", len(queue[0].children))
         print("QUEUE CHILDREN:", len(queue))
         print("PROCESSED NODES:", processed_nodes)
+        print("VISITED NODES:", visited_nodes)
         counter = 1
         for child in queue:
             print("IN QUEUE CHILD NR:", counter)
