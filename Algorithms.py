@@ -1,5 +1,7 @@
-from queue import Queue
-from copy import deepcopy
+# -----------------------------------------------------------
+# Implementations of different algorithms used to find the solution for the game
+# -----------------------------------------------------------
+
 from time import time
 
 
@@ -15,66 +17,108 @@ def is_game_solved(board):
 
     solved_boards_examples = [solved_board_3_3, solved_board_4_4]
 
-    # for solved_board in solved_boards_examples:
-    #     if board == solved_board:
-    #         return True
+    for solved_board in solved_boards_examples:
+        if board == solved_board:
+            return True
 
-    for board_to_check in solved_boards_examples:
-        for row in board_to_check:
-            for column in board_to_check[row]:
-                if board_to_check[row][column] != board[row][column]:
-                    return False
+    return False
 
 
-def bfs(start_time, board):
+def bfs(start_time, strategy_method, board):
     visited_nodes = 1
     processed_nodes = 1
     depth_level = 0
 
+    strategy_method_list = list(strategy_method)
+
+    # Creating the path list that will contain all the moves that lead to solution
     path = []
+    # Creating the searched list that initially contains the initial board and another visited nodes will be added if
+    # they are not the solution
     searched = [board.board]
+    # Creating the queue that will contain all nodes across which the solution should be found
     queue = [board]
 
+    # DEBUG - printing the initial board
+    print("Initial Board:")
+    print(board)
+    # END DEBUG - printing the initial board
+
     while queue:
+        # Checking if current first element (board) in queue meets the condition of solved board
         if is_game_solved(queue[0].board):
+            # If it does, return with calculated values
             solved = True
-            print(solved)
+            print("SOLVED BOARD:")
+            print(queue[0])
             processing_time = time() - start_time
             return path, visited_nodes, processed_nodes, depth_level, processing_time, solved
 
-        for move in ['L', 'R', 'U', 'D']:
+        # If no, go on with checking the moves that can be done with this board according to selected strategy_method
+        for move in strategy_method_list:
+            # Making the move with current board and creating it's children so that they can be checked and potentially
+            # added to the queue
             queue[0].make_move(move)
 
         for child in queue[0].children:
+            # For every created child check if it's board has not already been created earlier. Doing this by checking
+            # if current board was added to searched boards earlier
             if child.board not in searched:
+                # Adding the move, that leads to created current child, to the whole path
                 path.append(child.last_move)
+                # Adding the child's board to searched boards
                 searched.append(child.board)
-                queue.append(child)
+                # Incrementing processed nodes value to indicate that next child was checked and it's not the solution
                 processed_nodes += 1
+                # Checking if current selected child meets the condition of solved board
+                if is_game_solved(child.board):
+                    # If it does, return with calculated values
+                    solved = True
+
+                    # DEBUG - printing the solved board
+                    print("SOLVED BOARD:")
+                    print(child)
+                    # END DEBUG - printing the solved board
+
+                    processing_time = time() - start_time
+                    return path, visited_nodes, processed_nodes, depth_level, processing_time, solved
+                # If no, add the child to the queue so that it's children could be created
+                queue.append(child)
+
+        # Incrementing visited nodes value to indicate that children were created for another node in queue
         visited_nodes += 1
 
+        # DEBUG
+        # print("BOARD:")
+        # print(queue[0])
+        # print("BOARD CHILDREN:", len(queue[0].children))
+        # END DEBUG
+
+        # Removing visited node from the queue
         queue.pop(0)
 
-        print("BOARD:")
-        print(queue[0])
-        print("BOARD CHILDREN:", len(queue[0].children))
-        print("QUEUE CHILDREN:", len(queue))
-        print("PROCESSED NODES:", processed_nodes)
-        print("VISITED NODES:", visited_nodes)
-        counter = 1
-        for child in queue:
-            print("IN QUEUE CHILD NR:", counter)
-            print(child)
-            counter += 1
-        print()
-        print("----------------------------------")
+        # DEBUG
+        # print("QUEUE BOARDS:", len(queue))
+        # print("PROCESSED NODES:", processed_nodes)
+        # print("VISITED NODES:", visited_nodes)
+        #
+        # counter = 1
+        # for child in queue:
+        #     print("QUEUE BOARD NR:", counter)
+        #     print(child)
+        #     counter += 1
+        # print()
+        # print("----------------------------------")
+        # END DEBUG
+
+
 
     solved = False
     processing_time = time() - start_time
     return path, visited_nodes, processed_nodes, depth_level, processing_time, solved
 
 
-def dfs(start_time, board):
+def dfs(start_time, strategy_method, board):
     max_depth_level = 20
 
     visited_nodes = 0
@@ -88,7 +132,7 @@ def dfs(start_time, board):
     return visited_nodes, processed_nodes, depth_level, processing_time, solved
 
 
-def astr(start_time, heuristic, board):
+def astr(start_time, strategy_method, board):
     orders = [['R', 'D', 'U', 'L'],
               ['R', 'D', 'L', 'U'],
               ['D', 'R', 'U', 'L'],
@@ -104,19 +148,9 @@ def astr(start_time, heuristic, board):
     processing_time = 0
     solved = False
 
-    if heuristic == 'manh':
+    if strategy_method == 'manh':
         pass
     else:
         pass
 
     return visited_nodes, processed_nodes, depth_level, processing_time, solved
-
-
-def game_ended(board):
-    for solved_board in board.solved_boards_examples:
-        if solved_board == board.board:
-            return True
-
-    return False
-
-
