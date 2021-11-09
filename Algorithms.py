@@ -6,22 +6,37 @@ from time import time
 
 
 def is_game_solved(board):
-    solved_board_3_3 = [['1', '2', '3'],
-                        ['4', '5', '6'],
-                        ['7', '8', '0']]
+    """
+    Checking whether current board is solved so that every number from the left to the right and from up to down are
+    in numerical order and the last number is 0. The solved board should look like these ones:
 
-    solved_board_4_4 = [['1', '2', '3', '4'],
-                        ['5', '6', '7', '8'],
-                        ['9', '10', '11', '12'],
-                        ['13', '14', '15', '0']]
+    [['1', '2', '3'],
+    ['4', '5', '6'],
+    ['7', '8', '0']]
 
-    solved_boards_examples = [solved_board_3_3, solved_board_4_4]
+    OR
 
-    for solved_board in solved_boards_examples:
-        if board == solved_board:
-            return True
+    [['1', '2', '3', '4'],
+    ['5', '6', '7', '8'],
+    ['9', '10', '11', '12'],
+    ['13', '14', '15', '0']]
+    """
 
-    return False
+    solved = False
+
+    if board[0][0] == "1":
+        current_number = 1
+        for row in range(len(board)):
+            for column in range(len(board[row])):
+                if row == (len(board) - 1) and column == (len(board[row]) - 1):
+                    current_number = 0
+                if board[row][column] != str(current_number):
+                    return solved
+                current_number += 1
+        solved = True
+        return solved
+    else:
+        return solved
 
 
 def bfs(start_time, strategy_method, board):
@@ -40,7 +55,8 @@ def bfs(start_time, strategy_method, board):
     queue = [board]
 
     # DEBUG - printing the initial board
-    print("Initial Board:")
+    print()
+    print("INITIAL BOARD:")
     print(board)
     # END DEBUG - printing the initial board
 
