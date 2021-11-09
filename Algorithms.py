@@ -127,8 +127,6 @@ def bfs(start_time, strategy_method, board):
         # print("----------------------------------")
         # END DEBUG
 
-
-
     solved = False
     processing_time = time() - start_time
     return path, visited_nodes, processed_nodes, depth_level, processing_time, solved
@@ -137,15 +135,88 @@ def bfs(start_time, strategy_method, board):
 def dfs(start_time, strategy_method, board):
     max_depth_level = 20
 
-    visited_nodes = 0
-    processed_nodes = 0
+    visited_nodes = 1
+    processed_nodes = 1
     depth_level = 0
-    processing_time = 0
+
+    strategy_method_list = list(strategy_method)
+
+    path = []
+    searched = set(board)
+    stack = set()
+
+    # DEBUG - printing the initial board
+    print()
+    print("INITIAL BOARD:")
+    print(board)
+    # END DEBUG - printing the initial board
+
+    while stack:
+        depth_level += 1
+
+        if depth_level == max_depth_level:
+            solved = False
+            processing_time = time() - start_time
+            return path, visited_nodes, processed_nodes, depth_level, processing_time, solved
+
+        if is_game_solved(board.board):
+            solved = True
+            print("SOLVED BOARD:")
+            print(board.board)
+            processing_time = time() - start_time
+            return path, visited_nodes, processed_nodes, depth_level, processing_time, solved
+
+        for move in strategy_method_list:
+            board.make_move(move)
+
+        for child in board.children:
+            if child.board not in searched:
+                path.append(child.last_move)
+                searched.add(child)
+                processed_nodes += 1
+
+                if is_game_solved(child.board):
+                    solved = True
+
+                    # DEBUG - printing the solved board
+                    print("SOLVED BOARD:")
+                    print(child)
+                    # END DEBUG - printing the solved board
+
+                    processing_time = time() - start_time
+                    return path, visited_nodes, processed_nodes, depth_level, processing_time, solved
+
+                stack = set(child) | stack
+                searched.add(child)
+
+        visited_nodes += 1
+
+        # DEBUG
+        # print("BOARD:")
+        # print(queue[0])
+        # print("BOARD CHILDREN:", len(queue[0].children))
+        # END DEBUG
+
+        set.pop(0)
+
+        # DEBUG
+        # print("QUEUE BOARDS:", len(queue))
+        # print("PROCESSED NODES:", processed_nodes)
+        # print("VISITED NODES:", visited_nodes)
+        #
+        # counter = 1
+        # for child in queue:
+        #     print("QUEUE BOARD NR:", counter)
+        #     print(child)
+        #     counter += 1
+        # print()
+        # print("----------------------------------")
+        # END DEBUG
+
+
     solved = False
-
-    pass
-
-    return visited_nodes, processed_nodes, depth_level, processing_time, solved
+    processing_time = time() - start_time
+    return path, visited_nodes, processed_nodes, depth_level, processing_time, solved
 
 
 def astr(start_time, strategy_method, board):

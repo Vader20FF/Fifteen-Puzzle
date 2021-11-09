@@ -88,6 +88,7 @@ class Board:
                 tmp_board[empty_field_row][empty_field_column] = tmp_value
                 # Changing the coordinates of 'empty field' field
                 self.make_child(move, tmp_board)
+                return True
         elif move == 'R':
             # Checking if the field on right direction exists
             if empty_field_column < 3:
@@ -99,6 +100,7 @@ class Board:
                 tmp_board[empty_field_row][empty_field_column] = tmp_value
                 # Changing the coordinates of 'empty field' field
                 self.make_child(move, tmp_board)
+                return True
         elif move == 'U':
             # Checking if the field on up direction exists
             if empty_field_row > 0:
@@ -110,6 +112,7 @@ class Board:
                 tmp_board[empty_field_row][empty_field_column] = tmp_value
                 # Changing the coordinates of 'empty field' field
                 self.make_child(move, tmp_board)
+                return True
         elif move == 'D':
             # Checking if the field on down direction exists
             if empty_field_row < 3:
@@ -121,3 +124,6 @@ class Board:
                 tmp_board[empty_field_row][empty_field_column] = tmp_value
                 # Changing the coordinates of 'empty field' field
                 self.make_child(move, tmp_board)
+                return True
+
+        return False
