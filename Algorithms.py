@@ -142,8 +142,7 @@ def dfs(start_time, strategy_method, board):
     strategy_method_list = list(strategy_method)
 
     path = []
-    searched = set(board)
-    stack = set()
+    searched = set()
 
     # DEBUG - printing the initial board
     print()
@@ -151,72 +150,37 @@ def dfs(start_time, strategy_method, board):
     print(board)
     # END DEBUG - printing the initial board
 
-    while stack:
+    def dfs_recursion(searched, board, depth_level, visited_nodes, processed_nodes, strategy_method_list, solved):
         depth_level += 1
 
-        if depth_level == max_depth_level:
-            solved = False
+        if solved:
             processing_time = time() - start_time
-            return path, visited_nodes, processed_nodes, depth_level, processing_time, solved
+            return path, visited_nodes, processed_nodes, depth_level, processing_time, True
+        else:
+            if is_game_solved(board.board):
+                print("SOLVED BOARD:")
+                print(board)
+                processing_time = time() - start_time
+                return path, visited_nodes, processed_nodes, depth_level, processing_time, True
 
-        if is_game_solved(board.board):
-            solved = True
-            print("SOLVED BOARD:")
-            print(board.board)
-            processing_time = time() - start_time
-            return path, visited_nodes, processed_nodes, depth_level, processing_time, solved
+            if depth_level == max_depth_level:
+                processing_time = time() - start_time
+                return path, visited_nodes, processed_nodes, depth_level, processing_time, False
 
-        for move in strategy_method_list:
-            board.make_move(move)
+            if board not in searched:
+                searched.add(board)
 
-        for child in board.children:
-            if child.board not in searched:
-                path.append(child.last_move)
-                searched.add(child)
-                processed_nodes += 1
+                for move in strategy_method_list:
+                    board.make_move(move)
 
-                if is_game_solved(child.board):
-                    solved = True
+                for child in board.children:
+                    path.append(child.last_move)
+                    processed_nodes += 1
+                    visited_nodes += 1
+                    return dfs_recursion(searched, child, depth_level, visited_nodes, processed_nodes,
+                                         strategy_method_list, solved)
 
-                    # DEBUG - printing the solved board
-                    print("SOLVED BOARD:")
-                    print(child)
-                    # END DEBUG - printing the solved board
-
-                    processing_time = time() - start_time
-                    return path, visited_nodes, processed_nodes, depth_level, processing_time, solved
-
-                stack = set(child) | stack
-                searched.add(child)
-
-        visited_nodes += 1
-
-        # DEBUG
-        # print("BOARD:")
-        # print(queue[0])
-        # print("BOARD CHILDREN:", len(queue[0].children))
-        # END DEBUG
-
-        set.pop(0)
-
-        # DEBUG
-        # print("QUEUE BOARDS:", len(queue))
-        # print("PROCESSED NODES:", processed_nodes)
-        # print("VISITED NODES:", visited_nodes)
-        #
-        # counter = 1
-        # for child in queue:
-        #     print("QUEUE BOARD NR:", counter)
-        #     print(child)
-        #     counter += 1
-        # print()
-        # print("----------------------------------")
-        # END DEBUG
-
-
-    solved = False
-    processing_time = time() - start_time
-    return path, visited_nodes, processed_nodes, depth_level, processing_time, solved
+    return dfs_recursion(searched, board, depth_level, visited_nodes, processed_nodes, strategy_method_list, False)
 
 
 def astr(start_time, strategy_method, board):

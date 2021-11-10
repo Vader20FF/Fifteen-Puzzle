@@ -10,7 +10,6 @@ from copy import deepcopy
 class Board:
     empty_field_coordinates = []
     board = []
-    children = []
 
     def __init__(self, start_file_name=None, board=None, parent=None, last_move=None):
         if start_file_name is not None:
@@ -20,12 +19,14 @@ class Board:
             self.column_count = len(self.initial_board[0])
             self.parent = parent
             self.last_move = last_move
+            self.children = []
         else:
             self.board = board
             self.row_count = len(board)
             self.column_count = len(board[0])
             self.parent = parent
             self.last_move = last_move
+            self.children = []
 
         self.identify_empty_field_coordinates()
 
