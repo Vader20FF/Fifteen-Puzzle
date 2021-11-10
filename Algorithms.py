@@ -184,24 +184,40 @@ def dfs(start_time, strategy_method, board):
 
 
 def astr(start_time, strategy_method, board):
-    orders = [['R', 'D', 'U', 'L'],
-              ['R', 'D', 'L', 'U'],
-              ['D', 'R', 'U', 'L'],
-              ['D', 'R', 'L', 'U'],
-              ['L', 'U', 'D', 'R'],
-              ['L', 'U', 'R', 'D'],
-              ['U', 'L', 'D', 'R'],
-              ['U', 'L', 'R', 'D']]
-
     visited_nodes = 0
     processed_nodes = 0
     depth_level = 0
     processing_time = 0
     solved = False
 
-    if strategy_method == 'manh':
-        pass
+    def get_index_of_field(board, field_value):
+        for index_of_row, row in enumerate(board):
+            for index_of_column, column_value in enumerate(row):
+                if column_value == field_value:
+                    return index_of_row, index_of_column
+
+    if strategy_method == 'hamm':
+        def calculate_distance(current_board, solved_board):
+            distance = 0
+            for index_of_row, row in enumerate(current_board):
+                for index_of_column, elem in enumerate(row):
+                    goal_row, goal_column = get_index_of_field(solved_board, elem)
+                    if abs(index_of_row - goal_row) + abs(index_of_column - goal_column) != 0:
+                        distance += 1
+            return distance
+
     else:
-        pass
+        def calculate_distance(current_board, solved_board):
+            distance = 0
+            for index_of_row, row in enumerate(current_board):
+                for index_of_column, elem in enumerate(row):
+                    goal_row, goal_column = get_index_of_field(solved_board, elem)
+                    distance += abs(index_of_row - goal_row) + abs(index_of_column - goal_column)
+            return distance
+
+
+
+
+
 
     return visited_nodes, processed_nodes, depth_level, processing_time, solved
