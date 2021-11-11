@@ -41,7 +41,9 @@ class Board:
         return ""
 
     def load_start_board(self, start_file_name):
-        """Load the board's 2D array with the values from the given file"""
+        """
+        Load the board's 2D array with the values from the given file
+        """
 
         f = open(f"start_files/{start_file_name}", "r")
         lines = f.readlines()
@@ -53,7 +55,9 @@ class Board:
             self.board.append(formatted_line)
 
     def identify_empty_field_coordinates(self):
-        """Check at which coordinates the 0 number is in the board and save those values"""
+        """
+        Check at which coordinates the 0 number is in the board and save those values
+        """
 
         self.empty_field_coordinates.clear()
         for row in range(int(self.row_count)):
@@ -63,14 +67,18 @@ class Board:
                     self.empty_field_coordinates.append(column)
 
     def make_child(self, move, modified_board):
-        """Create another board object with given modified board (by the move that has been made)"""
+        """
+        Create another board object with given modified board (by the move that has been made)
+        """
 
         child = Board(start_file_name=None, board=modified_board, parent=self, last_move=move)
         self.children.append(child)
 
     def make_move(self, move):
-        """Create temporary board 2D array from current board's array but with modifying it by making a move in
-        specific direction (left, right, up, down)"""
+        """
+        Create temporary board 2D array from current board's array but with modifying it by making a move in
+        specific direction (left, right, up, down)
+        """
 
         self.identify_empty_field_coordinates()
         empty_field_row = self.empty_field_coordinates[0]

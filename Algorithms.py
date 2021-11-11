@@ -1,8 +1,38 @@
 # -----------------------------------------------------------
 # Implementations of different algorithms used to find the solution for the game
 # -----------------------------------------------------------
-
+from random import random
 from time import time
+
+
+def get_solved_board_from_current_board(board):
+    """
+    Getting solved board from the given board
+    """
+
+    row_count = 0
+    column_count = 0
+
+    for row in range(len(board)):
+        row_count += 1
+        if row == 1:
+            for column in range(len(board[row])):
+                column_count += 1
+
+    solved_board = []
+    current_number = 1
+
+    for row in range(row_count):
+        solved_board.append([])
+        for column in range(column_count):
+            if row == row_count - 1 and column == column_count - 1:
+                solved_board[row].append("0")
+                continue
+            solved_board[row].append(str(current_number))
+            current_number += 1
+
+    return solved_board
+
 
 
 def is_game_solved(board):
@@ -65,8 +95,10 @@ def bfs(start_time, strategy_method, board):
         if is_game_solved(queue[0].board):
             # If it does, return with calculated values
             solved = True
+            # DEBUG - printing the solved board
             print("SOLVED BOARD:")
             print(queue[0])
+            # END DEBUG - printing the solved board
             processing_time = time() - start_time
             return path, visited_nodes, processed_nodes, depth_level, processing_time, solved
 
@@ -170,13 +202,14 @@ def dfs(start_time, strategy_method, board):
             if board not in searched:
                 searched.add(board)
 
+                visited_nodes += 1
+
                 for move in strategy_method_list:
                     board.make_move(move)
 
                 for child in board.children:
                     path.append(child.last_move)
                     processed_nodes += 1
-                    visited_nodes += 1
                     return dfs_recursion(searched, child, depth_level, visited_nodes, processed_nodes,
                                          strategy_method_list, solved)
 
@@ -187,37 +220,97 @@ def astr(start_time, strategy_method, board):
     visited_nodes = 0
     processed_nodes = 0
     depth_level = 0
-    processing_time = 0
-    solved = False
+
+    # Creating the path list that will contain all the moves that lead to solution
+    path = []
+
+    moves_directions = ["L", "R", "U", "D"]
+
+    # DEBUG - printing the initial board
+    print()
+    print("INITIAL BOARD:")
+    print(board)
+    # END DEBUG - printing the initial board
 
     def get_index_of_field(board, field_value):
-        for index_of_row, row in enumerate(board):
+        """
+        Getting row and column number of the solved board from the given board and given field of this board
+        """
+
+        solved_board = get_solved_board_from_current_board(board)
+
+        for index_of_row, row in enumerate(solved_board):
             for index_of_column, column_value in enumerate(row):
                 if column_value == field_value:
                     return index_of_row, index_of_column
 
-    if strategy_method == 'hamm':
-        def calculate_distance(current_board, solved_board):
-            distance = 0
-            for index_of_row, row in enumerate(current_board):
-                for index_of_column, elem in enumerate(row):
-                    goal_row, goal_column = get_index_of_field(solved_board, elem)
-                    if abs(index_of_row - goal_row) + abs(index_of_column - goal_column) != 0:
-                        distance += 1
-            return distance
+    def calculate_hamming_distance(current_board):
+        """
+        Getting the hamming distance from the field of the current board to the field of same value in the solved board
+        """
 
-    else:
-        def calculate_distance(current_board, solved_board):
-            distance = 0
-            for index_of_row, row in enumerate(current_board):
-                for index_of_column, elem in enumerate(row):
-                    goal_row, goal_column = get_index_of_field(solved_board, elem)
-                    distance += abs(index_of_row - goal_row) + abs(index_of_column - goal_column)
-            return distance
+        hamming_distance = 0
+        for index_of_row, row in enumerate(current_board):
+            for index_of_column, column_value in enumerate(row):
+                goal_row_index, goal_column_index = get_index_of_field(current_board, column_value)
+                if abs(index_of_row - goal_row_index) + abs(index_of_column - goal_column_index) != 0:
+                    hamming_distance += 1
+        return hamming_distance
 
+    def calculate_manhattan_distance(current_board):
+        """
+        Getting the manhattan distance from the field of the current board to the field of same value in the solved
+        board
+        """
 
+        manhattan_distance = 0
+        for index_of_row, row in enumerate(current_board):
+            for index_of_column, column_value in enumerate(row):
+                goal_row_index, goal_column_index = get_index_of_field(current_board, column_value)
+                manhattan_distance += abs(index_of_row - goal_row_index) + abs(index_of_column - goal_column_index)
+        return manhattan_distance
 
+    current_board = board
+    child_errors = {}
 
+    while True:
+        child_errors.clear()
 
+        # Checking if current first element (board) in queue meets the condition of solved board
+        if is_game_solved(current_board.board):
+            # If it does, return with calculated values
+            solved = True
+            processing_time = time() - start_time
+            # DEBUG - printing the solved board
+            print("SOLVED BOARD:")
+            print(current_board)
+            # END DEBUG - printing the solved board
+            return path, visited_nodes, processed_nodes, depth_level, processing_time, solved
+        else:
+            # If no, go on with checking the moves that can be done with this board according to
+            # selected strategy_method
+            for move in moves_directions:
+                # Making the move with current board and creating it's children so that they can be
+                # checked and potentially added to the queue
+                current_board.make_move(move)
 
-    return visited_nodes, processed_nodes, depth_level, processing_time, solved
+            for child in current_board.children:
+                processed_nodes += 1
+
+                if strategy_method == "hamm":
+                    child_errors[child] = calculate_hamming_distance(child.board)
+                else:
+                    child_errors[child] = calculate_manhattan_distance(child.board)
+
+            min_error_value = min(child_errors.values())
+            for key in child_errors:
+                if child_errors[key] == min_error_value:
+                    path.append(key.last_move)
+                    current_board = key
+                    break
+
+            visited_nodes += 1
+
+    # solved = False
+    # processing_time = time() - start_time
+    # return path, visited_nodes, processed_nodes, depth_level, processing_time, solved
