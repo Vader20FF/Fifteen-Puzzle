@@ -7,7 +7,7 @@ import argparse
 if __name__ == '__main__':
     """ 
     The program can be executed like:
-    python .\main.py bfs RDUL 4x4_04_00001.txt 4x4_04_00001_rdul_sol.txt 4x4_04_00001_rdul_stats.txt
+    python .\main.py bfs RDUL 4x4_01_00001.txt 4x4_01_00001_bfs_rdul_sol.txt 4x4_01_00001_bfs_rdul_stats.txt
     OR
     python .\main.py dfs LUDR 4x4_01_00001.txt 4x4_01_00001_dfs_ludr_sol.txt 4x4_01_00001_dfs_ludr_stats.txt
     OR
@@ -17,7 +17,8 @@ if __name__ == '__main__':
     python .\main.py [strategy] [strategy_method] [start_file] [solution_file] [additional_file]
     
     WHERE:
-    [strategy] is one of [bfs, dfs, astr], [strategy_method] is one of [(letters L, R, U, D in any order), hamm, manh], 
+    [strategy] is one of [bfs, dfs, astr], 
+    [strategy_method] is one of [(letters L, R, U, D in any order), hamm, manh], 
     [start_file] is the name of the file that the values of initial board are stored in,
     [solution_file] is the name of the file that calculated values during the game are written to after the game is done
     [addition_file] is the name of the file that calculated values during the game are written to after the game is done

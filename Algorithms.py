@@ -34,7 +34,6 @@ def get_solved_board_from_current_board(board):
     return solved_board
 
 
-
 def is_game_solved(board):
     """
     Checking whether current board is solved so that every number from the left to the right and from up to down are
@@ -95,10 +94,19 @@ def bfs(start_time, strategy_method, board):
         if is_game_solved(queue[0].board):
             # If it does, return with calculated values
             solved = True
+
             # DEBUG - printing the solved board
             print("SOLVED BOARD:")
             print(queue[0])
             # END DEBUG - printing the solved board
+
+            while queue[0].parent is not None:
+                # As the solution has been found, path is being restored that led to this solution going from
+                # child to it's parent until the node is root and there is no parent
+                path.append(queue[0].last_move)
+                queue[0] = queue[0].parent
+            path.reverse()
+
             processing_time = time() - start_time
             return path, visited_nodes, processed_nodes, depth_level, processing_time, solved
 
@@ -112,8 +120,6 @@ def bfs(start_time, strategy_method, board):
             # For every created child check if it's board has not already been created earlier. Doing this by checking
             # if current board was added to searched boards earlier
             if child.board not in searched:
-                # Adding the move, that leads to created current child, to the whole path
-                path.append(child.last_move)
                 # Adding the child's board to searched boards
                 searched.append(child.board)
                 # Incrementing processed nodes value to indicate that next child was checked and it's not the solution
@@ -127,6 +133,14 @@ def bfs(start_time, strategy_method, board):
                     print("SOLVED BOARD:")
                     print(child)
                     # END DEBUG - printing the solved board
+
+                    path.clear()
+                    while child.parent is not None:
+                        # As the solution has been found, path is being restored that led to this solution going from
+                        # child to it's parent until the node is root and there is no parent
+                        path.append(child.last_move)
+                        child = child.parent
+                    path.reverse()
 
                     processing_time = time() - start_time
                     return path, visited_nodes, processed_nodes, depth_level, processing_time, solved

@@ -54,7 +54,8 @@ class Game:
         if solved:
             f.write(str(len(path)))
             f.write('\n')
-            f.write(str(path))
+            for move in path:
+                f.write(str(move))
             f.write('\n')
         else:
             f.write("-1\n")
