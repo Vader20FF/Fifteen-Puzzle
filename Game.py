@@ -55,7 +55,7 @@ class Game:
             f.write(str(len(path)))
             f.write('\n')
             for move in path:
-                f.write(str(move))
+                f.write(str(move).upper())
             f.write('\n')
         else:
             f.write("-1\n")
