@@ -66,7 +66,7 @@ class Game:
         """
         Creating the additional file that contains
         the path that led to solution (as in solution file),
-        visited nodes which is the number of children created for another node in queue in game,
+        visited nodes which is the number of nodes that children was generated for,
         processed nodes which is the value of children that were generated,
         depth level which is the maximum depth of recursion,
         processing time which is the period of time the program worked for until the solution was found
