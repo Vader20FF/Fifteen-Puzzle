@@ -1,6 +1,7 @@
 # -----------------------------------------------------------
 # Implementations of different algorithms used to find the solution for the game
 # -----------------------------------------------------------
+import sys
 from random import random
 from time import time
 
@@ -180,16 +181,17 @@ def bfs(start_time, strategy_method, board):
 
 def dfs(start_time, strategy_method, board):
     # Maximum depth level that was specified in the exercise instructions. Can be changed to any INT number
-    max_depth_level = 20
+    max_depth_level = 999999
+    sys.setrecursionlimit(max_depth_level)
 
     visited_nodes = 1
     processed_nodes = 1
-    depth_level = 0
+    depth_level = -1
 
     strategy_method_list = list(strategy_method)
 
     path = []
-    searched = set()
+    searched = []
 
     # DEBUG - printing the initial board
     print()
@@ -199,6 +201,8 @@ def dfs(start_time, strategy_method, board):
 
     def dfs_recursion(searched, board, depth_level, visited_nodes, processed_nodes, strategy_method_list, solved):
         depth_level += 1
+        print(depth_level)
+        print(board)
 
         if solved:
             processing_time = time() - start_time
@@ -216,7 +220,7 @@ def dfs(start_time, strategy_method, board):
                 return path, visited_nodes, processed_nodes, depth_level, processing_time, False
 
             if board not in searched:
-                searched.add(board)
+                searched.append(board.board)
 
                 visited_nodes += 1
 
@@ -224,8 +228,19 @@ def dfs(start_time, strategy_method, board):
                     board.make_move(move)
 
                 for child in board.children:
-                    path.append(child.last_move)
+                    if child.board in searched:
+                        continue
+
+                    if is_game_solved(child.board):
+                        print("SOLVED BOARD:")
+                        print(child)
+                        processing_time = time() - start_time
+                        return path, visited_nodes, processed_nodes, depth_level, processing_time, True
+
                     processed_nodes += 1
+
+                    path.append(child.last_move)
+
                     return dfs_recursion(searched, child, depth_level, visited_nodes, processed_nodes,
                                          strategy_method_list, solved)
 
