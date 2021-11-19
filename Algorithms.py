@@ -179,6 +179,7 @@ def bfs(start_time, strategy_method, board):
 
 
 def dfs(start_time, strategy_method, board):
+    # Maximum depth level that was specified in the exercise instructions. Can be changed to any INT number
     max_depth_level = 20
 
     visited_nodes = 1
@@ -210,6 +211,7 @@ def dfs(start_time, strategy_method, board):
                 return path, visited_nodes, processed_nodes, depth_level, processing_time, True
 
             if depth_level == max_depth_level:
+                print("MAX DEPTH LEVEL OF RECURSION HAS BEEN REACHED. ABORTING EXECUTION")
                 processing_time = time() - start_time
                 return path, visited_nodes, processed_nodes, depth_level, processing_time, False
 

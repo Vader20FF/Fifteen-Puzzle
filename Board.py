@@ -86,7 +86,7 @@ class Board:
 
         tmp_board = deepcopy(self.board)
 
-        if move == 'L':
+        if move == 'L' or move == 'l':
             # Checking if the field on left direction exists
             if empty_field_column > 0:
                 # Saving the value of field on the left of 'empty field'
@@ -98,7 +98,7 @@ class Board:
                 # Changing the coordinates of 'empty field' field
                 self.make_child(move, tmp_board)
                 return True
-        elif move == 'R':
+        elif move == 'R' or move == 'r':
             # Checking if the field on right direction exists
             if empty_field_column < 3:
                 # Saving the value of field on the right of 'empty field'
@@ -110,7 +110,7 @@ class Board:
                 # Changing the coordinates of 'empty field' field
                 self.make_child(move, tmp_board)
                 return True
-        elif move == 'U':
+        elif move == 'U' or move == 'u':
             # Checking if the field on up direction exists
             if empty_field_row > 0:
                 # Saving the value of field above 'empty field'
@@ -122,7 +122,7 @@ class Board:
                 # Changing the coordinates of 'empty field' field
                 self.make_child(move, tmp_board)
                 return True
-        elif move == 'D':
+        elif move == 'D' or move == 'd':
             # Checking if the field on down direction exists
             if empty_field_row < 3:
                 # Saving the value of field under 'empty field'

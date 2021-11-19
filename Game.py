@@ -83,7 +83,7 @@ class Game:
             f.write('\n')
             f.write(str(depth_level))
             f.write('\n')
-            f.write(str(round((time() - processing_time) * 1000, 3)))
+            f.write(str(round((processing_time) * 1000, 3)))
             f.write('\n')
         else:
             f.write("-1\n")
